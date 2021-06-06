@@ -116,7 +116,7 @@ uploadFile('powerball.json');
 async function startTracking() {
     const page = await configureBrowser();
 
-    let job = new CronJob('*/15 * * * * *', function(){ // runs every 2
+    let job = new CronJob('*/60 * * * * *', function(){ // runs every 60 seconds
         checkJackpot(page);
     }, null, true, null, null, true);
     job.start();
