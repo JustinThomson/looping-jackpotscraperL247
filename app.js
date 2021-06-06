@@ -14,7 +14,10 @@ const CronJob = require('cron').CronJob;
 const url = 'https://www.lotto247.com/en/play-lottery/powerball';
 
 async function configureBrowser() {
-const browser = await puppeteer.launch();
+const browser = await puppeteer.launch({
+        headless:true,
+        args: ["--no-sandbox"]
+    });
 const page = await browser.newPage();
 await page.setUserAgent('Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
 await page.goto(url, {waitUntil: 'networkidle2'});
