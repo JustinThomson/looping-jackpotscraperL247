@@ -1,5 +1,7 @@
 const express = require('express');
+const AWS = require('aws-sdk');
 const app = express();
+
 
 app.get('/', (req, res) => {
     res.send("Welcome to the homepage");
@@ -53,29 +55,56 @@ async function checkJackpot(page) {
     // convert JSON object to string
     const writedata = JSON.stringify(pagedata);
 
-    //write file to disk
-    const fs = require('fs');
-    fs.writeFile('./powerball.json', writedata, 'utf8', (err) => {
+
+
+
+
+//START OF NEW CODE FOR WRITING FILE TO S3 BUCKET
+const fs = require('fs');
+
+// Enter copied or downloaded access id and secret here
+const ID = 'AKIA2RM2BSE2QTWJ65S5';
+const SECRET = '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';
+
+// Enter the name of the bucket that you have created here
+const BUCKET_NAME = 'lottofeeds';;
+
+
+// Initializing S3 Interface
+const s3 = new AWS.S3({
+    accessKeyId: ID,
+    secretAccessKey: SECRET
+});
+
+const uploadFile = (fileName) => {
+    // read content from the file
+    const fileContent = writedata;
+
+    // setting up s3 upload parameters
+    const params = {
+        Bucket: BUCKET_NAME,
+        Key: 'powerball.json', // file name you want to save as
+        Body: fileContent
+    };
+
+    // Uploading files to the bucket
+    s3.upload(params, function(err, data) {
         if (err) {
-            console.log('Error');
-        } else {
-            console.log ('great success');
+            throw err
         }
-
+        console.log(`File uploaded successfully. ${data.Location}`)
     });
+};
+//END OF NEW CODE FOR WRITING FILE TO S3 BUCKET
 
-    //Write the file to AWS S3
-    const s3result = await s3
-    .upload({
-        Bucket: lottofeeds,
-        Key: 'powerballfeed.json',
-        Body: writedata,
-        ContentType: 'application/json',
-        ACL: 'public-read'
-    })
-    .promise()
-    console.log('S3 JSON URL:', s3result.Location);
-    //END of Write the file to AWS S3
+
+
+uploadFile('powerball.json');
+
+
+
+
+
 
 
 
