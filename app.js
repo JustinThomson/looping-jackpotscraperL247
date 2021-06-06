@@ -1,7 +1,7 @@
 const express = require('express');
 const AWS = require('aws-sdk');
 const app = express();
-
+require('dotenv').config();
 
 app.get('/', (req, res) => {
     res.send("Welcome to the homepage");
@@ -63,8 +63,8 @@ async function checkJackpot(page) {
 const fs = require('fs');
 
 // Enter copied or downloaded access id and secret here
-const ID = 'AKIA2RM2BSE2QTWJ65S5';
-const SECRET = '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';
+const ID = process.env.aws_access_key_id;
+const SECRET = process.env.aws_secret_access_key;
 
 // Enter the name of the bucket that you have created here
 const BUCKET_NAME = 'lottofeeds';;
@@ -116,7 +116,7 @@ uploadFile('powerball.json');
 async function startTracking() {
     const page = await configureBrowser();
 
-    let job = new CronJob('*/2 * * * *', function(){ // runs every 2 minutes
+    let job = new CronJob('*/15 * * * * *', function(){ // runs every 2
         checkJackpot(page);
     }, null, true, null, null, true);
     job.start();
