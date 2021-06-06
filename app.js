@@ -67,7 +67,7 @@ const ID = process.env.aws_access_key_id;
 const SECRET = process.env.aws_secret_access_key;
 
 // Enter the name of the bucket that you have created here
-const BUCKET_NAME = 'lottofeeds';;
+const BUCKET_NAME = 'lottofeeds';
 
 
 // Initializing S3 Interface
