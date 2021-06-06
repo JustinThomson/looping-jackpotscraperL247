@@ -64,6 +64,20 @@ async function checkJackpot(page) {
 
     });
 
+    //Write the file to AWS S3
+    const s3result = await s3
+    .upload({
+        Bucket: lottofeeds,
+        Key: 'powerballfeed.json',
+        Body: writedata,
+        ContentType: 'application/json',
+        ACL: 'public-read'
+    })
+    .promise()
+    console.log('S3 JSON URL:', s3result.Location);
+    //END of Write the file to AWS S3
+
+
 
     console.log(writedata);
     
