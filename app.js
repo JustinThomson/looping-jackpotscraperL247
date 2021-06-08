@@ -178,7 +178,7 @@ const lotteries =
 
 
  async function startTracking(){
-    let job = new CronJob('*/60 * * * * *', function(){ // runs every 15 seconds
+    let job = new CronJob('*/5 * * * *', function(){ // runs every 5 minutes
         scrapelotteries(lotteries, parallel);
     }, null, true, null, null, true);
     job.start();
