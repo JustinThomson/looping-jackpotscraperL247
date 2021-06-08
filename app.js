@@ -77,7 +77,7 @@ const lotteries =
              let jackpot = await page.evaluate(() => document.querySelector('div.jackpot.ng-star-inserted').innerText);
              let fullcountdown = await page.evaluate(() => document.querySelector('div.draw-time.ng-star-inserted > gli-game-counter > span').innerText);
              let minutecountdown = fullcountdown.slice(0,-5);
-             let hourcountdown = fullcountdown.slice(0,-10);
+             let hourcountdown = fullcountdown.slice(0,-11);
              let price = await page.evaluate(() => document.querySelector('div.ticket-price.ng-star-inserted').innerText);
              let logo = await page.evaluate(() => document.querySelector('gli-lottery-game-banner > div > div > div > div > div > img').src);
              let pageURL = lotteries[elem].url;
