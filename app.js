@@ -24,14 +24,14 @@ const lotteries =
    let adcopy = 
        {
         "playnow": {
-            "en": "Play Now!",
-            "es": "Something spanish",
-            "pt": "something portuguese"
+            "en": "Play now",
+            "es": "Juega ya",
+            "pt": "Jogue agora"
             },
-        "somethingelse": {
-            "en": "Heres something cool!",
-            "es": "Something cool in spanish",
-            "pt": "something cool in portuguese"
+        "register": {
+            "en": "Register",
+            "es": "Registrarse",
+            "pt": "Cadastre-se"
             } 
         };
 
@@ -39,8 +39,8 @@ const lotteries =
  
    console.log('\nI have the task of extracting data from ' + lotteries.length + ' pages and will visit ' + parallel + ' of them in paralell.');
  
-   console.log('This will result in ' + parallelBatches + ' batches.');
-   console.log('Lets do this!');
+   console.log('\nThis will result in ' + parallelBatches + ' batches.');
+   console.log('\nLets do this!');
  
    // Split up the Array of lotteries
    let k = 0
@@ -61,17 +61,17 @@ const lotteries =
        const elem = i + j
        // only proceed if there is an element
        if (lotteries[elem] !== undefined) {
-         // Promise to take Screenshots
+         // Promise to scrape the page data
          // promises push
-         console.log('I promise to extract data from: ' + lotteries[elem].name)
+         console.log('\nI promise to extract data from: ' + lotteries[elem].name)
          promises.push(browser.newPage().then(async page => {
            
            try {
-             // Only create screenshot if page.goto get's no error
+             // Only scrape page data if page.goto get's no error
              await page.setUserAgent('Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
              await page.setViewport({ width: 1280, height: 800 })
              await page.goto(lotteries[elem].url, {waitUntil: 'networkidle2'})
-             await page.waitForSelector('div.jackpot.ng-star-inserted', {visible: true,}); // wait for the jackpot amount  element to load
+             await page.waitForSelector('div.jackpot.ng-star-inserted', {visible: true,}); // wait for the jackpot amount element to load before we extract data
 
              let lotteryname = await page.evaluate(() => document.querySelector('div.title.ng-star-inserted > h1').innerText);
              let jackpot = await page.evaluate(() => document.querySelector('div.jackpot.ng-star-inserted').innerText);
@@ -80,6 +80,8 @@ const lotteries =
              let hourcountdown = fullcountdown.slice(0,-10);
              let price = await page.evaluate(() => document.querySelector('div.ticket-price.ng-star-inserted').innerText);
              let logo = await page.evaluate(() => document.querySelector('gli-lottery-game-banner > div > div > div > div > div > img').src);
+             let pageURL = lotteries[elem].url;
+         //    let slug = pagepath.split("/").pop().split(";")[0];
              let pagedata = {
                 lotteryname,
                 jackpot,
@@ -87,16 +89,19 @@ const lotteries =
                 minutecountdown,
                 hourcountdown,
                 price,
-                logo
+                logo,
+                pageURL
             };
             
             writedata = pagedata;
             
            } catch (err) {
-             console.log('Oops! I couldn\'t keep my promise to extract data from ' + lotteries[elem].name + '. Here is the error message:' + err)
+             console.log('\nOops! I couldn\'t keep my promise to extract data from ' + lotteries[elem].name + '. Here is the error message:' + err)
            }
+           console.log('\nI have successfully extracted the contents from the page.');
            objectdata.push(writedata);
-           console.log('\nThis data has been pushed into the writedata variable:\n' + JSON.stringify(writedata));
+           console.log('\nThis data has been pushed into the objectdata variable:\n' + JSON.stringify(writedata));
+           console.log('\nThe objectdata variable now contains:\n' + JSON.stringify(objectdata));
          }))
        }
      }
@@ -109,8 +114,50 @@ const lotteries =
 
    console.log('\nAll done with scraping the data and storing it in an object! Now lets write it to disk.\n')
 
-  //write the file to disk
+  
   const fs = require('fs');
+
+  // START OF NEW AWS CODE
+   // Enter copied or downloaded access id and secret here
+   const ID = process.env.aws_access_key_id;
+   const SECRET = process.env.aws_secret_access_key;
+
+   // Enter the name of the bucket that you have created here
+   const BUCKET_NAME = 'lottofeeds';
+
+   // Initializing S3 Interface
+   const s3 = new AWS.S3({
+       accessKeyId: ID,
+       secretAccessKey: SECRET
+   });
+
+   const uploadFile = (fileName) => {
+       // read content from the file
+       const fileContent = JSON.stringify(objectdata);
+
+       // setting up s3 upload parameters
+       const params = {
+           Bucket: BUCKET_NAME,
+           Key: fileName, // file name
+           Body: fileContent
+       };
+
+       // Uploading files to the bucket
+       s3.upload(params, function(err, data) {
+           if (err) {
+               throw err
+           }
+           console.log(`\nI have uploaded the file successfully to here: ${data.Location}`)
+       });
+   };
+
+   uploadFile('jackpotfeed.json');
+   // END OF NEW AWS CODE
+
+
+
+  //write the file to disk
+/*
   const filepath = './jackpotfeed.json';
   fs.writeFile(filepath, JSON.stringify(objectdata), 'utf8', (err) => {
       if (err) {
@@ -120,7 +167,8 @@ const lotteries =
           console.log("\nHere are the contents of the JSON:\n" + JSON.stringify(objectdata));
       }
 
-  });
+  }); 
+  */
   // End of writing to desk
 
 
