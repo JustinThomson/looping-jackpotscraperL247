@@ -1,6 +1,4 @@
-const express = require('express');
 const AWS = require('aws-sdk');
-const app = express();
 const puppeteer = require('puppeteer');
 const CronJob = require('cron').CronJob;
 require('dotenv').config();
@@ -18,6 +16,8 @@ const lotteries =
 
  const scrapelotteries = async (lotteries, parallel) => {
    const parallelBatches = Math.ceil(lotteries.length / parallel)
+
+   // Create an empty object to store all the scraped data
    const objectdata = [];
 
    // Add new ad text into the adcopy variable below
