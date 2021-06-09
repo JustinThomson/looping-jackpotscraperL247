@@ -11,7 +11,8 @@ const lotteries =
     { name: 'Powerball', url: 'https://www.lotto247.com/en/play-lottery/powerball' },
     { name: 'Powerball Plus', url: 'https://www.lotto247.com/en/play-lottery/powerball-plus' },
     { name: 'Mega Millions', url: 'https://www.lotto247.com/en/play-lottery/megamillions' },
-    { name: 'Mega Millions Max', url: 'https://www.lotto247.com/en/play-lottery/mega-millions-max' }
+    { name: 'Mega Millions Max', url: 'https://www.lotto247.com/en/play-lottery/mega-millions-max' },
+    { name: 'Powerball', url: 'https://www.playhugelottos.com/en/play-the-lottery/usa-powerball.html' }
 ]
 
  const scrapelotteries = async (lotteries, parallel) => {
@@ -67,13 +68,15 @@ const lotteries =
          promises.push(browser.newPage().then(async page => {
            
            try {
+
+            if(lotteries[elem].url.includes("lotto247")) {
              // Only scrape page data if page.goto get's no error
              await page.setUserAgent('Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
              await page.setViewport({ width: 1280, height: 800 })
              await page.goto(lotteries[elem].url, {waitUntil: 'networkidle2'})
              await page.waitForSelector('div.jackpot.ng-star-inserted', {visible: true,}); // wait for the jackpot amount element to load before we extract data
 
-             let lotteryname = await page.evaluate(() => document.querySelector('div.title.ng-star-inserted > h1').innerText);
+             let lotteryname = lotteries[elem].name;
              let jackpot = await page.evaluate(() => document.querySelector('div.jackpot.ng-star-inserted').innerText);
              let fullcountdown = await page.evaluate(() => document.querySelector('div.draw-time.ng-star-inserted > gli-game-counter > span').innerText);
              let minutecountdown = fullcountdown.slice(0,-5);
@@ -81,7 +84,6 @@ const lotteries =
              let price = await page.evaluate(() => document.querySelector('div.ticket-price.ng-star-inserted').innerText);
              let logo = await page.evaluate(() => document.querySelector('gli-lottery-game-banner > div > div > div > div > div > img').src);
              let pageURL = lotteries[elem].url;
-         //    let slug = pagepath.split("/").pop().split(";")[0];
              let pagedata = {
                 lotteryname,
                 jackpot,
@@ -95,7 +97,40 @@ const lotteries =
             
             writedata = pagedata;
             
-           } catch (err) {
+           } else if(lotteries[elem].url.includes("playhugelottos")) {
+            // Only scrape page data if page.goto get's no error
+            await page.setUserAgent('Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)');
+            await page.setViewport({ width: 1280, height: 800 })
+            await page.goto(lotteries[elem].url, {waitUntil: 'networkidle2'})
+            await page.waitForSelector('div.timer-wrapper > div.angular-my-timer-date.ng-binding', {visible: true,}); // wait for the jackpot amount element to load before we extract data
+
+            let lotteryname = lotteries[elem].name;
+            let jackpot = await page.evaluate(() => document.querySelector('div.col-lg-12.grey-bg.lotto-logo-holder > div > div.col-lg-4.col-sm-4.col-xs-12.center > div:nth-child(6) > div:nth-child(2) > span').innerText);
+            let nextdrawdate = await page.evaluate(() => document.querySelector('div.timer-wrapper > div.angular-my-timer-date.ng-binding').innerText);
+            let daysremain = await page.evaluate(() => document.querySelector('div.timer-wrapper > div:nth-child(2) > div > div:nth-child(1) > span').innerText);
+            let hoursremain = await page.evaluate(() => document.querySelector('div.timer-wrapper > div:nth-child(2) > div > div:nth-child(2) > span').innerText);
+            let minutesremain = await page.evaluate(() => document.querySelector('div.timer-wrapper > div:nth-child(2) > div > div:nth-child(3) > span').innerText);
+            let secondsremain = await page.evaluate(() => document.querySelector('div.timer-wrapper > div:nth-child(2) > div > div:nth-child(4) > span').innerText);
+            let fullcountdown = daysremain + "d : " + hoursremain + "h : " + minutesremain + "m : " + secondsremain + "s";
+            let minutecountdown = daysremain + "d : " + hoursremain + "h : " + minutesremain + "m"; 
+            let hourcountdown = daysremain + "d : " + hoursremain + "h"; 
+            let logo = await page.evaluate(() => document.querySelector('div.col-lg-4.col-sm-4.col-xs-12.lotto-logo > a:nth-child(2) > img').src);
+            let pageURL = lotteries[elem].url;
+            let pagedata = {
+               lotteryname,
+               jackpot,
+               nextdrawdate,
+               fullcountdown,
+               minutecountdown,
+               hourcountdown,
+               logo,
+               pageURL
+           };
+           
+           writedata = pagedata;
+           
+          } 
+        } catch (err) {
              console.log('\nOops! I couldn\'t keep my promise to extract data from ' + lotteries[elem].name + '. Here is the error message:' + err)
            }
            console.log('\nI have successfully extracted the contents from the page.');
@@ -166,7 +201,6 @@ const lotteries =
           console.log ('\nI have saved the JSON file to\n' + filepath);
           console.log("\nHere are the contents of the JSON:\n" + JSON.stringify(objectdata));
       }
-
   }); 
   */
   // End of writing to desk
@@ -174,8 +208,6 @@ const lotteries =
 
  }
  
-
-
 
  async function startTracking(){
     let job = new CronJob('*/5 * * * *', function(){ // runs every 5 minutes
