@@ -1,7 +1,74 @@
 const AWS = require('aws-sdk');
 const puppeteer = require('puppeteer');
 const CronJob = require('cron').CronJob;
+const CC = require('currency-converter-lt');
 require('dotenv').config();
+
+
+// USD to Nigerian Naira conversion
+let USDNGNconverter = new CC({from:"USD", to:"NGN", amount:1})
+let USDNGNrate = 0;
+USDNGNconverter.convert().then((response) => {
+  USDNGNrate = response; //or do something else
+});
+// EUR to Nigerian Naira conversion
+let EURNGNconverter = new CC({from:"EUR", to:"NGN", amount:1})
+let EURNGNrate = 0;
+EURNGNconverter.convert().then((response) => {
+  EURNGNrate = response; //or do something else
+});
+// AUD to Nigerian Naira conversion
+let AUDNGNconverter = new CC({from:"AUD", to:"NGN", amount:1})
+let AUDNGNrate = 0;
+AUDNGNconverter.convert().then((response) => {
+  AUDNGNrate = response; //or do something else
+});
+// GBP to Nigerian Naira conversion
+let GBPNGNconverter = new CC({from:"GBP", to:"NGN", amount:1})
+let GBPNGNrate = 0;
+GBPNGNconverter.convert().then((response) => {
+  GBPNGNrate = response; //or do something else
+});
+// BRL to Nigerian Naira conversion
+let BRLNGNconverter = new CC({from:"BRL", to:"NGN", amount:1})
+let BRLNGNrate = 0;
+BRLNGNconverter.convert().then((response) => {
+  BRLNGNrate = response; //or do something else
+});
+
+// USD to Indian Rupees conversion
+let USDINRconverter = new CC({from:"USD", to:"INR", amount:1})
+let USDINRrate = 0;
+USDINRconverter.convert().then((response) => {
+  USDINRrate = response; //or do something else
+});
+// EUR to Indian Rupees conversion
+let EURINRconverter = new CC({from:"EUR", to:"INR", amount:1})
+let EURINRrate = 0;
+EURINRconverter.convert().then((response) => {
+  EURINRrate = response; //or do something else
+});
+// AUD to Indian Rupees conversion
+let AUDINRconverter = new CC({from:"AUD", to:"INR", amount:1})
+let AUDINRrate = 0;
+AUDINRconverter.convert().then((response) => {
+  AUDINRrate = response; //or do something else
+});
+// GBP to Indian Rupees conversion
+let GBPINRconverter = new CC({from:"GBP", to:"INR", amount:1})
+let GBPINRrate = 0;
+GBPINRconverter.convert().then((response) => {
+  GBPINRrate = response; //or do something else
+});
+// BRL to Indian Rupees conversion
+let BRLINRconverter = new CC({from:"BRL", to:"INR", amount:1})
+let BRLINRrate = 0;
+BRLINRconverter.convert().then((response) => {
+  BRLINRrate = response; //or do something else
+});
+
+
+
 
 // Choose the number of parallel requests to run (1 is best for this script purpose)
 const parallel = 1;
@@ -12,7 +79,12 @@ const lotteries =
     { name: 'Powerball Plus', url: 'https://www.lotto247.com/en/play-lottery/powerball-plus' },
     { name: 'Mega Millions', url: 'https://www.lotto247.com/en/play-lottery/megamillions' },
     { name: 'Mega Millions Max', url: 'https://www.lotto247.com/en/play-lottery/mega-millions-max' },
-    { name: 'Powerball', url: 'https://www.playhugelottos.com/en/play-the-lottery/usa-powerball.html' }
+    { name: 'SuperEna Max', url: 'https://www.lotto247.com/en/play-lottery/superenamax' },
+    { name: 'Powerball', url: 'https://www.playhugelottos.com/en/play-the-lottery/usa-powerball.html' },
+    { name: 'Powerball Plus', url: 'https://www.playhugelottos.com/en/play-the-lottery/usa-powerball-plus.html' },
+    { name: 'Mega Millions', url: 'https://www.playhugelottos.com/en/play-the-lottery/usa-mega-millions.html' },
+    { name: 'Mega Millions Max', url: 'https://www.playhugelottos.com/en/play-the-lottery/usa-mega-millions-max.html' },
+    { name: 'SuperEna Max', url: 'https://www.playhugelottos.com/en/play-the-lottery/superenamax.html' }
 ]
 
  const scrapelotteries = async (lotteries, parallel) => {
@@ -78,6 +150,43 @@ const lotteries =
 
              let lotteryname = lotteries[elem].name;
              let jackpot = await page.evaluate(() => document.querySelector('div.jackpot.ng-star-inserted').innerText);
+
+             let jackpotInteger = parseInt(jackpot.replace(/\D/g,''));
+             console.log('The jackpot amount displayed as an Integer is:' + jackpotInteger);
+
+
+             let lottocurrency = '';
+             let jackpotNGNvalue = 0;
+             let jackpotINRvalue = 0;
+
+             let rawcurrencylabel = jackpot.charAt(0);
+             if (rawcurrencylabel ==='$') {
+                lottocurrency = 'USD';
+                jackpotNGNvalue = jackpotInteger * USDNGNrate;
+                jackpotINRvalue = jackpotInteger * USDINRrate;
+             } else if (rawcurrencylabel ==='€') {
+                lottocurrency = 'EUR';
+                jackpotNGNvalue = jackpotInteger * EURNGNrate;
+                jackpotINRvalue = jackpotInteger * EURINRrate;
+             } else if (rawcurrencylabel ==='A') {
+                lottocurrency = 'AUD';
+                jackpotNGNvalue = jackpotInteger * AUDNGNrate;
+                jackpotINRvalue = jackpotInteger * AUDINRrate;
+             } else if (rawcurrencylabel ==='£') {
+                lottocurrency = 'GBP';
+                jackpotNGNvalue = jackpotInteger * GBPNGNrate;
+                jackpotINRvalue = jackpotInteger * GBPINRrate;
+             } else if (rawcurrencylabel ==='R') {
+                lottocurrency = 'BRL';
+                jackpotNGNvalue = jackpotInteger * BRLNGNrate;
+                jackpotINRvalue = jackpotInteger * BRLINRrate;
+             }
+
+             nigeriaNumberFormat = new Intl.NumberFormat('en-NG');
+             indiaNumberFormat = new Intl.NumberFormat('en-IN');
+             let jackpotNaira = '₦ ' + nigeriaNumberFormat.format(jackpotNGNvalue);
+             let jackpotRupees = '₹' + indiaNumberFormat.format(jackpotINRvalue);
+
              let fullcountdown = await page.evaluate(() => document.querySelector('div.draw-time.ng-star-inserted > gli-game-counter > span').innerText);
              let minutecountdown = fullcountdown.slice(0,-5);
              let hourcountdown = fullcountdown.slice(0,-11);
@@ -92,7 +201,9 @@ const lotteries =
                 hourcountdown,
                 price,
                 logo,
-                pageURL
+                pageURL,
+                jackpotNaira,
+                jackpotRupees
             };
             
             writedata = pagedata;
@@ -106,6 +217,45 @@ const lotteries =
 
             let lotteryname = lotteries[elem].name;
             let jackpot = await page.evaluate(() => document.querySelector('div.col-lg-12.grey-bg.lotto-logo-holder > div > div.col-lg-4.col-sm-4.col-xs-12.center > div:nth-child(6) > div:nth-child(2) > span').innerText);
+
+
+            let jackpotInteger = parseInt(jackpot.replace(/\D/g,''));
+             console.log('The jackpot amount displayed as an Integer is:' + jackpotInteger);
+
+
+             let lottocurrency = '';
+             let jackpotNGNvalue = 0;
+             let jackpotINRvalue = 0;
+
+             let rawcurrencylabel = jackpot.substring(0,3);
+             if (rawcurrencylabel ==='USD') {
+                lottocurrency = 'USD';
+                jackpotNGNvalue = jackpotInteger * USDNGNrate;
+                jackpotINRvalue = jackpotInteger * USDINRrate;
+             } else if (rawcurrencylabel ==='EUR') {
+                lottocurrency = 'EUR';
+                jackpotNGNvalue = jackpotInteger * EURNGNrate;
+                jackpotINRvalue = jackpotInteger * EURINRrate;
+             } else if (rawcurrencylabel ==='AUD') {
+                lottocurrency = 'AUD';
+                jackpotNGNvalue = jackpotInteger * AUDNGNrate;
+                jackpotINRvalue = jackpotInteger * AUDINRrate;
+             } else if (rawcurrencylabel ==='GBP') {
+                lottocurrency = 'GBP';
+                jackpotNGNvalue = jackpotInteger * GBPNGNrate;
+                jackpotINRvalue = jackpotInteger * GBPINRrate;
+             } else if (rawcurrencylabel ==='BRL') {
+                lottocurrency = 'BRL';
+                jackpotNGNvalue = jackpotInteger * BRLNGNrate;
+                jackpotINRvalue = jackpotInteger * BRLINRrate;
+             }
+
+             nigeriaNumberFormat = new Intl.NumberFormat('en-NG');
+             indiaNumberFormat = new Intl.NumberFormat('en-IN');
+             let jackpotNaira = '₦ ' + nigeriaNumberFormat.format(jackpotNGNvalue);
+             let jackpotRupees = '₹' + indiaNumberFormat.format(jackpotINRvalue);
+
+
             let nextdrawdate = await page.evaluate(() => document.querySelector('div.timer-wrapper > div.angular-my-timer-date.ng-binding').innerText);
             let daysremain = await page.evaluate(() => document.querySelector('div.timer-wrapper > div:nth-child(2) > div > div:nth-child(1) > span').innerText);
             let hoursremain = await page.evaluate(() => document.querySelector('div.timer-wrapper > div:nth-child(2) > div > div:nth-child(2) > span').innerText);
@@ -124,7 +274,9 @@ const lotteries =
                minutecountdown,
                hourcountdown,
                logo,
-               pageURL
+               pageURL,
+               jackpotNaira,
+               jackpotRupees
            };
            
            writedata = pagedata;
@@ -210,7 +362,7 @@ const lotteries =
  
 
  async function startTracking(){
-    let job = new CronJob('*/5 * * * *', function(){ // runs every 5 minutes
+    let job = new CronJob('*/10 * * * *', function(){ // runs every 10 minutes
         scrapelotteries(lotteries, parallel);
     }, null, true, null, null, true);
     job.start();

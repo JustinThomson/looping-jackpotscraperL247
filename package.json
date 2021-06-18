@@ -12,7 +12,9 @@
   "dependencies": {
     "aws-sdk": "^2.923.0",
     "cron": "^1.8.2",
+    "currency-converter-lt": "^1.1.1",
     "dotenv": "^10.0.0",
+    "nodejs-currency-converter": "^1.0.2",
     "puppeteer": "^10.0.0",
     "uuid": "^8.3.2"
   }
