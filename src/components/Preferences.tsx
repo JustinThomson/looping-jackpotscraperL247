@@ -40,8 +40,27 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const [region, setRegionState] = useState<RegionPref>("all");
 
   useEffect(() => {
-    setFormatState(read("ob:format", FORMATS, "decimal"));
-    setRegionState(read("ob:region", REGIONS, "all"));
+    const storedFormat = read<OddsFormat | "">("ob:format", [...FORMATS, ""], "");
+    if (storedFormat) setFormatState(storedFormat);
+    const stored = read<RegionPref | "">("ob:region", [...REGIONS, ""], "");
+    if (stored) {
+      setRegionState(stored);
+      return;
+    }
+    // First visit: ask the server for a geo hint (CDN header) and default to that region.
+    fetch("/api/geo")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { region: RegionPref | null } | null) => {
+        if (d?.region && (REGIONS as readonly string[]).includes(d.region)) {
+          setRegionState(d.region);
+          write("ob:region", d.region);
+          if (d.region === "united-states" && !storedFormat) {
+            setFormatState("american");
+            write("ob:format", "american");
+          }
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const setFormat = useCallback((f: OddsFormat) => {
