@@ -1,21 +1,33 @@
 {
-  "name": "scraperworker",
+  "name": "oddsbridge",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "SEO content site comparing sports betting platforms in South Africa, Africa, the US and Europe: odds comparison, bonuses, reviews and a booking code converter.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=20.9"
+  },
   "dependencies": {
-    "aws-sdk": "^2.923.0",
-    "cron": "^1.8.2",
-    "currency-converter-lt": "^1.1.1",
-    "dotenv": "^10.0.0",
-    "nodejs-currency-converter": "^1.0.2",
-    "puppeteer": "^10.0.0",
-    "uuid": "^8.3.2"
+    "marked": "^16.4.2",
+    "next": "^16.4.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "postcss": "^8.5.32",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~5.9",
+    "vitest": "^5.1.0"
   }
 }
