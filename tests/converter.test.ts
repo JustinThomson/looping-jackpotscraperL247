@@ -115,3 +115,12 @@ describe("conversion", () => {
     expect(rows[0].matched).toBeGreaterThanOrEqual(rows.at(-1)!.matched);
   });
 });
+
+describe("review regressions", () => {
+  it("accepts O/I/L typos and rejects invalid characters cleanly", () => {
+    const code = encodeDemoCode("SPB", [{ fixtureId: "a-vs-b-2026-11-08", market: "1x2", pick: "home" }]);
+    const typo = code.replace(/^DM-SPB-/, "").replace(/0/g, "O").replace(/1/g, "l");
+    expect(decodeDemoCode(`DM-SPB-${typo}`).selections).toHaveLength(1);
+    expect(() => decodeDemoCode("DM-SPB-ZM5UF7D6591G")).toThrow(CodeFormatError);
+  });
+});

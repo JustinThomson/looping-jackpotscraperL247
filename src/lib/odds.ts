@@ -35,7 +35,7 @@ const COMMON_FRACTIONS: [number, number][] = [
 
 /** Decimal -> fractional string. Snaps to a common fraction when within 1.5%, otherwise reduces exactly. */
 export function decimalToFractional(d: number): string {
-  if (!(d > 1)) throw new RangeError("Decimal odds must be greater than 1");
+  if (!(d > 1) || !Number.isFinite(d)) throw new RangeError("Decimal odds must be a finite number greater than 1");
   const target = d - 1;
   let best: [number, number] | null = null;
   let bestErr = Infinity;
@@ -47,8 +47,9 @@ export function decimalToFractional(d: number): string {
     }
   }
   if (best && bestErr <= 0.015) return `${best[0]}/${best[1]}`;
-  const den = 100;
-  const num = Math.round(target * den);
+  // Use a finer denominator for very short prices (e.g. 1.004 -> 1/250).
+  const den = target < 0.05 ? 1000 : 100;
+  const num = Math.max(1, Math.round(target * den));
   const g = gcd(num, den);
   return `${num / g}/${den / g}`;
 }
@@ -67,7 +68,7 @@ export function impliedProbability(d: number): number {
 }
 
 export function formatOdds(d: number, format: OddsFormat): string {
-  if (!Number.isFinite(d) || d <= 1) return "–";
+  if (!Number.isFinite(d) || d <= 1 || d >= 100_000) return "–";
   switch (format) {
     case "fractional":
       return decimalToFractional(d);
@@ -85,10 +86,10 @@ export function parseOdds(input: string, format: OddsFormat): number | null {
   try {
     const s = input.trim();
     if (!s) return null;
-    if (format === "fractional") return fractionalToDecimal(s);
-    if (format === "american") return americanToDecimal(parseFloat(s.replace(/^\+/, "")));
-    const d = parseFloat(s);
-    return d > 1 ? d : null;
+    const d =
+      format === "fractional" ? fractionalToDecimal(s) : format === "american" ? americanToDecimal(Number(s.replace(/^\+/, ""))) : Number(s);
+    // Reject 0/5, Infinity, 1e999, NaN etc. — odds must be finite and above evens-minus-stake.
+    return Number.isFinite(d) && d > 1 && d < 100_000 ? d : null;
   } catch {
     return null;
   }

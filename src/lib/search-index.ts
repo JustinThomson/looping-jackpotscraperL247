@@ -19,6 +19,7 @@ export function buildSearchIndex(): SearchDoc[] {
   }
   for (const c of countries) {
     docs.push({ title: `Betting sites in ${c.name}`, url: `/betting-sites/${c.slug}`, type: "Country", text: `${c.demonym} bookmakers, legal status, payments: ${c.popularPayments.slice(0, 3).join(", ")}` });
+    docs.push({ title: `Best betting apps in ${c.name}`, url: `/betting-apps/${c.slug}`, type: "Country", text: `${c.demonym} betting apps ranked: iOS, Android, data-light` });
     docs.push({ title: `${c.demonym} betting bonuses`, url: `/bonuses/${c.slug}`, type: "Bonuses", text: `Welcome offers and free bets in ${c.name}` });
   }
   for (const g of getGuides()) docs.push({ title: g.title, url: `/guides/${g.slug}`, type: "Guide", text: g.description });

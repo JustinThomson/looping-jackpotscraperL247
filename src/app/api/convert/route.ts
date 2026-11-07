@@ -14,6 +14,7 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
+  if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   if (!body.from || !body.to || !body.code) {
     return NextResponse.json({ error: "Please choose both bookmakers and enter a booking code." }, { status: 400 });
   }

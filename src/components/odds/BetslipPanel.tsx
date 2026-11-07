@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Odds, usePrefs } from "@/components/Preferences";
 import { slip, useSlip } from "./slip-store";
 
@@ -25,14 +25,20 @@ export function BetslipPanel() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
-  // Results are stale once the slip or region changes.
-  useEffect(() => setRows(null), [items, region]);
+  const requestId = useRef(0);
+  // Results are stale once the slip or region changes; also invalidate in-flight requests.
+  useEffect(() => {
+    requestId.current++;
+    setRows(null);
+    setLoading(false);
+  }, [items, region]);
 
   if (!items.length) return null;
 
   const stakeNum = Math.max(0, parseFloat(stake) || 0);
 
   async function compare() {
+    const id = ++requestId.current;
     setLoading(true);
     setError(null);
     try {
@@ -42,12 +48,13 @@ export function BetslipPanel() {
         body: JSON.stringify({ selections: items.map(({ fixtureId, market, pick }) => ({ fixtureId, market, pick })), region }),
       });
       const data = await res.json();
+      if (id !== requestId.current) return;
       if (!res.ok) throw new Error(data.error || "Something went wrong");
       setRows(data.rows);
     } catch (e) {
-      setError((e as Error).message);
+      if (id === requestId.current) setError((e as Error).message);
     } finally {
-      setLoading(false);
+      if (id === requestId.current) setLoading(false);
     }
   }
 

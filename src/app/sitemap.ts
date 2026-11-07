@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     e("/tools/bet-calculator", 0.6, "monthly"),
     e("/tools/margin-calculator", 0.6, "monthly"),
     ...["/about", "/methodology", "/responsible-gambling", "/affiliate-disclosure", "/privacy", "/terms", "/contact"].map((p) => e(p, 0.3, "yearly")),
-    ...countries.flatMap((c) => [e(`/betting-sites/${c.slug}`, 0.9, "weekly"), e(`/bonuses/${c.slug}`, 0.8, "weekly")]),
+    ...countries.flatMap((c) => [e(`/betting-sites/${c.slug}`, 0.9, "weekly"), e(`/bonuses/${c.slug}`, 0.8, "weekly"), e(`/betting-apps/${c.slug}`, 0.7, "weekly")]),
     ...bookmakers.map((b) => e(`/bookmakers/${b.slug}`, 0.8, "weekly")),
     ...leagues.map((l) => e(`/odds/${l.slug}`, 0.7, "hourly")),
     ...fixtures.map((f) => e(`/odds/match/${f.id}`, 0.5, "hourly")),

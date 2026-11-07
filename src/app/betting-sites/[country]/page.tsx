@@ -197,6 +197,9 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
         <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
           <div className="card p-5">
             <h2 className="font-bold">{c.name} at a glance</h2>
+            <p className="mt-1 text-sm">
+              <Link href={`/betting-apps/${c.slug}`}>Best betting apps in {c.name} →</Link>
+            </p>
             <dl className="mt-3 space-y-2.5 text-sm">
               <div>
                 <dt className="text-muted">Legal status</dt>

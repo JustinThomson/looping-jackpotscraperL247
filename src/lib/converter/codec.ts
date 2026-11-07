@@ -46,14 +46,21 @@ export function base32Encode(bytes: Uint8Array): string {
   return out;
 }
 
+export class CodeFormatError extends Error {}
+
+/** Crockford normalisation: O→0, I/L→1 (common typos). */
+export function normalizeBase32(s: string): string {
+  return s.toUpperCase().replace(/O/g, "0").replace(/[IL]/g, "1");
+}
+
 export function base32Decode(s: string): Uint8Array {
-  const clean = s.toUpperCase().replace(/O/g, "0").replace(/[IL]/g, "1");
+  const clean = normalizeBase32(s);
   let bits = 0;
   let value = 0;
   const out: number[] = [];
   for (const ch of clean) {
     const v = ALPHABET.indexOf(ch);
-    if (v < 0) throw new Error(`Invalid character "${ch}"`);
+    if (v < 0) throw new CodeFormatError(`Booking code contains an invalid character "${ch}".`);
     value = ((value << 5) | v) & 0xffff;
     bits += 5;
     if (bits >= 8) {
@@ -99,15 +106,13 @@ export interface DecodedCode {
   selections: { fixtureHash: number; market: MarketKey; pick: PickKey }[];
 }
 
-export class CodeFormatError extends Error {}
-
 export function decodeDemoCode(code: string): DecodedCode {
   const m = code.trim().toUpperCase().replace(/\s+/g, "").match(/^DM-([A-Z0-9]{2,5})-([0-9A-Z]+)$/);
   if (!m) throw new CodeFormatError("This doesn't look like a demo booking code (expected DM-XXX-...).");
   const [, prefix, body] = m;
   const bytes = Array.from(base32Decode(body));
   // Reject non-canonical encodings (e.g. a typo in the final character's padding bits).
-  if (base32Encode(new Uint8Array(bytes)) !== body) throw new CodeFormatError("Booking code checksum failed — please check for typos.");
+  if (base32Encode(new Uint8Array(bytes)) !== normalizeBase32(body)) throw new CodeFormatError("Booking code checksum failed — please check for typos.");
   // Base32 padding can add a trailing partial byte; selections are 3 bytes + 1 checksum.
   const usable = bytes.length - ((bytes.length - 1) % 3);
   const data = bytes.slice(0, usable - 1);

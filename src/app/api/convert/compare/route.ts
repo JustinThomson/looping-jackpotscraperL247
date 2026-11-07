@@ -15,6 +15,7 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
+  if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   if (!body.from || !body.code) return NextResponse.json({ error: "Choose a bookmaker and enter a code." }, { status: 400 });
   try {
     // Validate the code once up front so we can return a helpful error.

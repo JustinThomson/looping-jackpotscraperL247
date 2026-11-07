@@ -81,3 +81,14 @@ describe("margins and returns", () => {
     expect(r.returns).toBeCloseTo(40);
   });
 });
+
+describe("odds input hardening", () => {
+  it("rejects degenerate inputs instead of crashing", () => {
+    expect(parseOdds("0/5", "fractional")).toBeNull();
+    expect(parseOdds("Infinity", "decimal")).toBeNull();
+    expect(parseOdds("1e999", "decimal")).toBeNull();
+    expect(decimalToFractional(1.004)).not.toBe("0/1");
+    expect(() => decimalToFractional(Infinity)).toThrow(RangeError);
+    expect(formatOdds(Infinity, "fractional")).toBe("–");
+  });
+});

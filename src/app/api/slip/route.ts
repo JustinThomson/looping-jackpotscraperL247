@@ -27,9 +27,14 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+  if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   const sels = Array.isArray(body.selections) ? body.selections.slice(0, 20) : [];
-  if (!sels.length || sels.some((s) => typeof s.fixtureId !== "string" || !MARKETS.has(s.market) || !PICKS.has(s.pick))) {
+  if (!sels.length || sels.some((s) => !s || typeof s !== "object" || typeof s.fixtureId !== "string" || !MARKETS.has(s.market) || !PICKS.has(s.pick))) {
     return NextResponse.json({ error: "Add at least one valid selection." }, { status: 400 });
+  }
+  // One selection per match: an accumulator can't contain related outcomes from the same fixture.
+  if (new Set(sels.map((s) => s.fixtureId)).size !== sels.length) {
+    return NextResponse.json({ error: "Each match can only appear once in an accumulator." }, { status: 400 });
   }
   const region = REGIONS.has(body.region ?? "all") ? ((body.region ?? "all") as RegionKey | "all") : "all";
   const allowed = bookmakersForScope(region);
@@ -54,7 +59,9 @@ export async function POST(req: Request) {
           } else missing.push(f ? `${f.home} vs ${f.away}` : s.fixtureId);
         }
         let code: string | undefined;
-        if (codeBooks.has(b.slug) && available.length) {
+        // Demo codes can only reference sample fixtures (the demo adapter's catalogue).
+        const codeable = available.filter((s) => fixtures.get(s.fixtureId)?.source === "sample");
+        if (codeBooks.has(b.slug) && codeable.length === available.length && available.length) {
           try {
             code = await getAdapter(b.slug).book(
               available.map((s) => ({ eventId: s.fixtureId, market: s.market, pick: s.pick })),
