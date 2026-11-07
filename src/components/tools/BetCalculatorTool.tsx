@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { accumulatorReturn, combinations, parseOdds, systemBetReturn, type OddsFormat } from "@/lib/odds";
 
+// Fixed locale so server-rendered and hydrated output match.
+const MONEY = new Intl.NumberFormat("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 interface Leg {
   odds: string;
   result: "win" | "lose";
@@ -29,7 +32,7 @@ export function BetCalculatorTool() {
   const sys = system > 0 && system < legs.length ? systemBetReturn(s, odds, system, results) : null;
 
   const update = (i: number, patch: Partial<Leg>) => setLegs(legs.map((l, j) => (j === i ? { ...l, ...patch } : l)));
-  const money = (n: number) => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const money = (n: number) => MONEY.format(n);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Odds, OddsFormatToggle, RegionSelect, usePrefs, type RegionPref } from "@/components/Preferences";
 import type { BoardRow, BookMeta } from "@/lib/odds-data/compact";
 import type { PickKey } from "@/lib/types";
@@ -15,19 +15,24 @@ export function allowedBooks(meta: BookMeta, region: RegionPref): (slug: string)
   return (slug) => (meta.countries[slug] ?? []).some((c) => codes.has(c));
 }
 
-export function formatKickoff(iso: string) {
+/** Deterministic (UTC, en-GB) when `local` is false so server and first client render match. */
+export function formatKickoff(iso: string, local = false) {
   const d = new Date(iso);
+  const opts: Intl.DateTimeFormatOptions = local ? {} : { timeZone: "UTC" };
+  const locale = local ? undefined : "en-GB";
   return {
-    day: d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }),
-    time: d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
+    day: d.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short", ...opts }),
+    time: d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", ...opts }) + (local ? "" : " UTC"),
   };
 }
 
 export function KickoffTime({ iso }: { iso: string }) {
-  // Rendered on the client in the visitor's timezone; server shows UTC.
-  const { day, time } = formatKickoff(iso);
+  // Server and hydration render show UTC; switch to the visitor's timezone after mount.
+  const [local, setLocal] = useState(false);
+  useEffect(() => setLocal(true), []);
+  const { day, time } = formatKickoff(iso, local);
   return (
-    <span className="tabular block text-xs leading-tight text-muted" suppressHydrationWarning>
+    <span className="tabular block text-xs leading-tight text-muted">
       <span className="block font-semibold text-ink-700">{day}</span>
       {time}
     </span>
