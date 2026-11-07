@@ -23,7 +23,7 @@ export function BookmakerBadge({ name, size = 44 }: { name: string; size?: numbe
 }
 
 export function ScoreBadge({ score, size = "md" }: { score: number; size?: "sm" | "md" | "lg" }) {
-  const tone = score >= 8.5 ? "bg-brand-600" : score >= 7.8 ? "bg-brand-700" : "bg-ink-700";
+  const tone = score >= 8.5 ? "bg-brand-700" : score >= 7.8 ? "bg-brand-800" : "bg-ink-700";
   const cls = size === "lg" ? "h-16 w-16 text-2xl" : size === "sm" ? "h-9 w-9 text-sm" : "h-12 w-12 text-lg";
   return (
     <span className={`tabular inline-flex flex-col items-center justify-center rounded-xl font-bold text-white ${tone} ${cls}`} aria-label={`Rating ${score.toFixed(1)} out of 10`}>
@@ -126,7 +126,7 @@ export function Check({ ok }: { ok: boolean | undefined }) {
 
 export function Notice({ children, tone = "info" }: { children: React.ReactNode; tone?: "info" | "warn" }) {
   const cls = tone === "warn" ? "border-gold-400 bg-gold-100 text-gold-700" : "border-brand-200 bg-brand-50 text-brand-800";
-  return <div className={`rounded-xl border px-4 py-3 text-sm ${cls}`}>{children}</div>;
+  return <div className={`inline-links rounded-xl border px-4 py-3 text-sm ${cls}`}>{children}</div>;
 }
 
 export function TermsNote({ className = "" }: { className?: string }) {

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/server/rate-limit";
 import { compareAcrossBookmakers, getAdapter, ConverterError, CodeFormatError } from "@/lib/converter";
 import type { CountryCode } from "@/lib/types";
 
@@ -6,6 +7,8 @@ export const dynamic = "force-dynamic";
 
 /** Convert one code to every supported bookmaker and rank by total odds. */
 export async function POST(req: Request) {
+  const limited = rateLimit(req, "compare", 10);
+  if (limited) return limited;
   let body: { from?: string; code?: string; country?: CountryCode };
   try {
     body = await req.json();

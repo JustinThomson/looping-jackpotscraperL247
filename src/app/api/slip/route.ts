@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/server/rate-limit";
 import { bookmakers } from "@/data/bookmakers";
 import { getAllFixtures, bookmakersForScope } from "@/lib/odds-data";
 import { getAdapter, converterBookmakers } from "@/lib/converter";
@@ -18,6 +19,8 @@ interface Body {
 
 /** Price a multi-selection slip at every bookmaker and generate booking codes where supported. */
 export async function POST(req: Request) {
+  const limited = rateLimit(req, "slip", 30);
+  if (limited) return limited;
   let body: Body;
   try {
     body = (await req.json()) as Body;

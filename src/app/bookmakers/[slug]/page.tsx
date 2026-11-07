@@ -9,6 +9,9 @@ import { monthYear, pageMetadata, reviewLd } from "@/lib/seo";
 import { converterBookmakers } from "@/lib/converter";
 import type { FeatureKey, Faq } from "@/lib/types";
 
+/** Re-render daily so "updated" dates and years stay current. */
+export const revalidate = 86400;
+
 export function generateStaticParams() {
   return bookmakers.map((b) => ({ slug: b.slug }));
 }
@@ -151,7 +154,9 @@ export default async function BookmakerPage({ params }: { params: Promise<{ slug
                     <th className="px-4 py-3 font-semibold">Country</th>
                     <th className="px-4 py-3 font-semibold">Offer</th>
                     <th className="px-4 py-3 font-semibold">Licence</th>
-                    <th className="px-4 py-3" />
+                    <th className="px-4 py-3">
+                      <span className="sr-only">Visit</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,7 +207,11 @@ export default async function BookmakerPage({ params }: { params: Promise<{ slug
                 How to use {b.name} {b.bookingCode.name.toLowerCase()}s
               </h2>
               <p>
-                {b.name} lets you save a betslip as a {b.bookingCode.name.toLowerCase()} that anyone can load. It&apos;s the easiest way to share a tip or copy an accumulator from a friend.
+                {b.name} lets you save a betslip as a {b.bookingCode.name.toLowerCase()} that anyone can load. It&apos;s the easiest way to share a tip or copy an accumulator from a friend. See our full{" "}
+                <Link href={`/booking-codes/${b.slug}`}>
+                  {b.name} {b.bookingCode.name.toLowerCase()} guide
+                </Link>
+                .
               </p>
               <h3>Create a {b.bookingCode.name.toLowerCase()}</h3>
               <ol>
@@ -239,7 +248,7 @@ export default async function BookmakerPage({ params }: { params: Promise<{ slug
           )}
 
           <section>
-            <SectionHeader title="Payment methods" />
+            <SectionHeader title="Popular payment methods" sub="Typical options — check the cashier for the full, current list." />
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {b.markets.map((m) => {
                 const c = countryByCode(m.country)!;

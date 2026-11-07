@@ -4,6 +4,9 @@ import { countryByCode, regions } from "@/data/countries";
 import { PageHero } from "@/components/ui";
 import { monthYear, pageMetadata } from "@/lib/seo";
 
+/** Re-render daily so "updated" dates and years stay current. */
+export const revalidate = 86400;
+
 export const metadata = pageMetadata({
   title: `Betting Sites by Country (${monthYear()}) — South Africa, Africa, US & Europe`,
   description: "Find the best licensed betting sites in your country. Rankings, legal status, bonuses and payment methods for South Africa, Nigeria, Kenya, Ghana, the US, UK and Europe.",

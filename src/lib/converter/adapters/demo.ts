@@ -114,11 +114,17 @@ export function createDemoAdapter(bookmaker: string, opts: { now?: () => Date } 
         throw new CodeFormatError(`That code belongs to a different bookmaker (prefix ${decoded.prefix}). ${b.name} demo codes start with DM-${prefix}-.`);
       }
       const events = await catalogue(country, at);
-      const byHash = new Map(events.map((e) => [fixtureHash(e.id), e]));
+      const byHash = new Map<number, CatalogueEvent[]>();
+      for (const e of events) {
+        const h = fixtureHash(e.id);
+        byHash.set(h, [...(byHash.get(h) ?? []), e]);
+      }
       const selections: Selection[] = [];
       let expired = 0;
       for (const s of decoded.selections) {
-        const ev = byHash.get(s.fixtureHash);
+        // 20-bit hashes can collide; prefer the event that actually offers this market/pick.
+        const candidates = byHash.get(s.fixtureHash) ?? [];
+        const ev = candidates.find((c) => c.markets.some((x) => x.market === s.market && x.prices.some((p) => p.pick === s.pick))) ?? candidates[0];
         const m = ev?.markets.find((x) => x.market === s.market);
         const p = m?.prices.find((x) => x.pick === s.pick);
         if (!ev || !m || !p) {

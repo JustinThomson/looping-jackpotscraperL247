@@ -12,6 +12,8 @@ const COLS: { title: string; links: { href: string; label: string }[] }[] = [
       { href: "/bonuses", label: "Betting bonuses" },
       { href: "/compare", label: "Head-to-head comparisons" },
       { href: "/booking-code-converter", label: "Booking code converter" },
+      { href: "/booking-codes", label: "Booking codes by bookmaker" },
+      { href: "/odds/today", label: "Odds today" },
     ],
   },
   {

@@ -28,6 +28,9 @@ export default async function OddsPage() {
         intro="The best available price for every upcoming match, across every bookmaker we track. Choose your region to only see bookmakers you can use, switch between decimal, fractional and American odds, and add prices to your betslip to compare the full accumulator."
       >
         <nav aria-label="Leagues" className="mt-5 flex flex-wrap gap-2">
+          <Link href="/odds/today" className="chip border-ink-900 bg-ink-900 text-white no-underline hover:no-underline">
+            Today &amp; tomorrow
+          </Link>
           {sorted.map((l) => (
             <Link key={l.slug} href={`/odds/${l.slug}`} className="chip no-underline hover:border-brand-500 hover:no-underline">
               {l.name}

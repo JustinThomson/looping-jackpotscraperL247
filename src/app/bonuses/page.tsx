@@ -5,6 +5,9 @@ import { OfferCard } from "@/components/bookmakers";
 import { FaqSection, PageHero, SectionHeader } from "@/components/ui";
 import { monthYear, pageMetadata } from "@/lib/seo";
 
+/** Re-render daily so "updated" dates and years stay current. */
+export const revalidate = 86400;
+
 export const metadata = pageMetadata({
   title: `Betting Bonuses & Free Bets (${monthYear()}) — Welcome Offers by Country`,
   description: "The latest sports betting welcome bonuses, free bets and accumulator boosts in South Africa, Nigeria, Kenya, Ghana, the US, UK and Europe — with plain-English terms.",

@@ -8,6 +8,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { itemListLd, monthYear, pageMetadata } from "@/lib/seo";
 import type { Offer } from "@/lib/types";
 
+/** Re-render daily so "updated" dates and years stay current. */
+export const revalidate = 86400;
+
 const TYPE_LABELS: Record<Offer["type"], string> = {
   "deposit-match": "Deposit match",
   "free-bet": "Free bet",

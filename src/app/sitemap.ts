@@ -4,6 +4,7 @@ import { countries } from "@/data/countries";
 import { leagues } from "@/data/leagues";
 import { comparePairs } from "@/lib/compare";
 import { converterPairs } from "@/lib/converter/books";
+import { converterBookmakers } from "@/lib/converter";
 import { getGuides } from "@/lib/guides";
 import { getAllFixtures } from "@/lib/odds-data";
 import { absoluteUrl } from "@/lib/site";
@@ -22,6 +23,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     e("/", 1, "daily"),
     e("/odds", 0.9, "hourly"),
+    e("/odds/today", 0.9, "hourly"),
+    e("/booking-codes", 0.8, "weekly"),
+    ...converterBookmakers().map((b) => e(`/booking-codes/${b.slug}`, 0.8, "weekly")),
     e("/booking-code-converter", 0.9, "weekly"),
     e("/bookmakers", 0.8, "weekly"),
     e("/bonuses", 0.8, "daily"),

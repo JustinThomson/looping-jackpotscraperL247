@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/server/rate-limit";
 import { convertBookingCode, ConverterError, CodeFormatError } from "@/lib/converter";
 import type { CountryCode } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const limited = rateLimit(req, "convert", 30);
+  if (limited) return limited;
   let body: { from?: string; to?: string; code?: string; country?: CountryCode; toCountry?: CountryCode };
   try {
     body = await req.json();

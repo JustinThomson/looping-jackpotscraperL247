@@ -5,6 +5,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { itemListLd, monthYear, pageMetadata } from "@/lib/seo";
 import { KEY_FEATURES } from "@/components/bookmakers";
 
+/** Re-render daily so "updated" dates and years stay current. */
+export const revalidate = 86400;
+
 export const metadata = pageMetadata({
   title: `All Bookmakers Reviewed & Rated (${monthYear()})`,
   description: `Independent reviews of ${bookmakers.length} licensed bookmakers across South Africa, Africa, the US and Europe. Filter by country and features like booking codes, live streaming and mobile money.`,

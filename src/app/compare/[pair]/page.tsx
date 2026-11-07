@@ -8,6 +8,9 @@ import { comparePairs, parseComparePair } from "@/lib/compare";
 import { pageMetadata } from "@/lib/seo";
 import type { Bookmaker, FeatureKey } from "@/lib/types";
 
+/** Re-render daily so "updated" dates and years stay current. */
+export const revalidate = 86400;
+
 export function generateStaticParams() {
   return comparePairs().map((p) => ({ pair: p.slug }));
 }
