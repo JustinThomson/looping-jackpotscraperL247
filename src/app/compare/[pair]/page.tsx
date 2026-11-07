@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ pair: str
   if (!p) return {};
   const c = countryByCode(p.shared[0])!;
   return pageMetadata({
-    title: `${p.a.name} vs ${p.b.name} (${new Date().getFullYear()}): Which Is Better in ${c.name}?`,
+    title: `${p.a.name} vs ${p.b.name}: Which Is Better in ${c.name}?`,
     description: `${p.a.name} vs ${p.b.name} compared: ratings, odds margins, welcome bonuses, features${p.a.features.bookingCode || p.b.features.bookingCode ? ", booking codes" : ""} and payment methods side by side.`,
     path: `/compare/${pair}`,
   });

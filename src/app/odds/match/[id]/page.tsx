@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const l = leagueBySlug(f.league);
   const date = new Date(f.kickoff).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
   return pageMetadata({
-    title: `${f.home} vs ${f.away} Odds (${date}) — Compare ${f.books.length} Bookmakers`,
+    title: `${f.home} vs ${f.away} Odds — ${date}`,
     description: `${f.home} vs ${f.away} betting odds compared across ${f.books.length} bookmakers. Best ${l?.threeWay ? "1X2" : "moneyline"}, over/under and more for this ${l?.name ?? ""} match, with bookmaker margins.`,
     path: `/odds/match/${f.id}`,
   });

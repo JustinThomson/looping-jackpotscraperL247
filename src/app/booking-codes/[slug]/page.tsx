@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!b?.bookingCode) return {};
   const name = b.bookingCode.name;
   return pageMetadata({
-    title: `${b.name} ${name}: How to Create, Load & Convert (${new Date().getFullYear()})`,
+    title: `${b.name} ${name}: Create, Load & Convert (${new Date().getFullYear()})`,
     description: `Step-by-step guide to ${b.name} ${name.toLowerCase()}s: how to book a bet, load a code, fix "invalid code" errors and convert ${b.name} codes to other bookmakers for free.`,
     path: `/booking-codes/${b.slug}`,
   });

@@ -8,7 +8,7 @@ import { monthYear, pageMetadata } from "@/lib/seo";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata({
-  title: `Betting Sites by Country (${monthYear()}) — South Africa, Africa, US & Europe`,
+  title: `Betting Sites by Country — South Africa, Africa, US & Europe`,
   description: "Find the best licensed betting sites in your country. Rankings, legal status, bonuses and payment methods for South Africa, Nigeria, Kenya, Ghana, the US, UK and Europe.",
   path: "/betting-sites",
 });

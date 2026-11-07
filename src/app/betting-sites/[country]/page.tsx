@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   if (!c) return {};
   const n = bookmakersInCountry(c.code).length;
   return pageMetadata({
-    title: `Best Betting Sites in ${c.name} (${monthYear()}) — ${n} Licensed Bookmakers Compared`,
+    title: `Best Betting Sites in ${c.name} (${monthYear()})`,
     description: `Compare the best ${c.demonym} betting sites: ${n} licensed bookmakers ranked on odds, bonuses, payments (${c.popularPayments.slice(0, 2).join(", ")}) and apps. Legal status, tips and FAQs.`,
     path: `/betting-sites/${c.slug}`,
   });
