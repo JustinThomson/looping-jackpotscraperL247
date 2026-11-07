@@ -25,6 +25,12 @@ npm run build && npm start   # production
 
 Node 20.9+ is required.
 
+### Deploying
+
+- **Vercel**: import the repo; no extra config needed. Set the environment variables below.
+- **Docker / self-hosted**: `docker build -t oddsbridge . && docker run -p 3000:3000 --env-file .env.local oddsbridge` (uses Next's standalone output via `NEXT_OUTPUT=standalone`).
+- After deploying, run `BASE_URL=https://your-domain npm run smoke` to check every sitemap URL.
+
 ## Configuration
 
 | Variable | Purpose |
