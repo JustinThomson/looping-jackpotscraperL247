@@ -64,6 +64,11 @@ export function websiteLd(): JsonLdObject {
     description: site.description,
     publisher: { "@id": absoluteUrl("/#organization") },
     inLanguage: "en",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: absoluteUrl("/search?q={search_term_string}") },
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 

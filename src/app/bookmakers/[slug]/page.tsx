@@ -74,8 +74,15 @@ export default async function BookmakerPage({ params }: { params: Promise<{ slug
               { name: b.name, path: `/bookmakers/${b.slug}` },
             ]}
           />
-          <div className="mt-5 grid items-center gap-6 md:grid-cols-[auto_1fr_auto]">
-            <BookmakerBadge name={b.name} size={80} />
+          <div className="mt-5 grid grid-cols-[auto_1fr] items-center gap-4 md:grid-cols-[auto_1fr_auto] md:gap-6">
+            <div className="self-start pt-6 md:self-center md:pt-0">
+              <span className="md:hidden">
+                <BookmakerBadge name={b.name} size={48} />
+              </span>
+              <span className="hidden md:block">
+                <BookmakerBadge name={b.name} size={80} />
+              </span>
+            </div>
             <div>
               <p className="eyebrow">Review · Updated {monthYear()}</p>
               <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{b.name} review</h1>
@@ -91,7 +98,7 @@ export default async function BookmakerPage({ params }: { params: Promise<{ slug
                 })}
               </p>
             </div>
-            <div className="flex items-center gap-4 md:flex-col md:items-end">
+            <div className="col-span-2 flex items-center gap-4 md:col-span-1 md:flex-col md:items-end">
               <ScoreBadge score={rating} size="lg" />
               <VisitButton b={b} country={primary.country} />
             </div>

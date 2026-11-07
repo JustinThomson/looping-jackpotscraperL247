@@ -55,3 +55,16 @@ describe("guide content", () => {
     }
   });
 });
+
+import { rank } from "@/components/SearchResults";
+import { buildSearchIndex } from "@/lib/search-index";
+
+describe("site search", () => {
+  const docs = buildSearchIndex();
+  it("finds bookmakers, countries and accents-insensitive matches", () => {
+    expect(rank(docs, "sportybet")[0].url).toMatch(/sportybet/);
+    expect(rank(docs, "kenya betting").some((d) => d.url === "/betting-sites/kenya")).toBe(true);
+    expect(rank(docs, "zzzz")).toEqual([]);
+    expect(rank(docs, "  ")).toEqual([]);
+  });
+});

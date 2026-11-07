@@ -55,6 +55,12 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+        <Link href="/search" className="ml-auto rounded-lg p-2 text-white/85 hover:bg-white/10 hover:text-white lg:ml-0" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </Link>
         <Link href="/booking-code-converter" className="btn-primary hidden py-2 sm:inline-flex lg:hidden xl:inline-flex">
           Convert a code
         </Link>
