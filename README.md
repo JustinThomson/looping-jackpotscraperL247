@@ -31,6 +31,7 @@ Node 20.9+ is required.
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL used for canonicals, sitemap and Open Graph. |
 | `ODDS_API_KEY` | Optional [The Odds API](https://the-odds-api.com) key. When set, leagues the API covers (EPL, LaLiga, Serie A, Bundesliga, UCL, NBA, NFL) show live prices for mapped US/UK/EU bookmakers, cached for 15 minutes. |
 | `ODDS_API_REGIONS` | Regions requested from The Odds API (default `uk,eu,us`). |
+| `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Optional: enables Plausible analytics for this domain (`NEXT_PUBLIC_PLAUSIBLE_SRC` overrides the script URL). |
 | `AFFILIATE_<SLUG>_<COUNTRY>` | Optional outbound tracking URL per bookmaker and market, e.g. `AFFILIATE_BETWAY_ZA`. Used by the `/go/[slug]` redirect. |
 
 Without an odds key the site runs on **deterministic sample odds**, which every odds page labels clearly.

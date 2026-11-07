@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { site } from "@/lib/site";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -43,6 +44,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <BetslipPanel />
         </PreferencesProvider>
         <JsonLd data={[organizationLd(), websiteLd()]} />
+        {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
+          <Script defer data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN} src={process.env.NEXT_PUBLIC_PLAUSIBLE_SRC || "https://plausible.io/js/script.js"} strategy="afterInteractive" />
+        )}
       </body>
     </html>
   );
