@@ -18,6 +18,7 @@ npm install
 cp .env.example .env.local   # optional
 npm run dev                  # http://localhost:3000
 npm test                     # unit tests (vitest)
+npm run smoke                # fetch every sitemap URL on a running server (BASE_URL=...)
 npm run typecheck
 npm run build && npm start   # production
 ```
